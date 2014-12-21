@@ -82,7 +82,7 @@ int fsm_deriveKey(HDNode *node, uint32_t *address_n, size_t address_n_count)
 {
 	size_t i;
 	if (address_n_count > 3) {
-		layoutProgressSwipe("Preparing keys", 0, 0);
+		layoutProgressSwipe("Preparing keys", 0);
 	}
 	for (i = 0; i < address_n_count; i++) {
 		if (hdnode_private_ckd(node, address_n[i]) == 0) {
@@ -91,7 +91,7 @@ int fsm_deriveKey(HDNode *node, uint32_t *address_n, size_t address_n_count)
 			return 0;
 		}
 		if (address_n_count > 3) {
-			layoutProgress("Preparing keys", 1000 * i / address_n_count, i);
+			layoutProgress("Preparing keys", 1000 * i / address_n_count);
 		}
 	}
 	return 1;
@@ -561,7 +561,7 @@ void fsm_msgSignMessage(SignMessage *msg)
 	}
 	if (fsm_deriveKey(node, msg->address_n, msg->address_n_count) == 0) return;
 
-	layoutProgressSwipe("Signing", 0, 0);
+	layoutProgressSwipe("Signing", 0);
 	if (cryptoMessageSign(msg->message.bytes, msg->message.size, node->private_key, resp->signature.bytes) == 0) {
 		resp->has_address = true;
 		uint8_t addr_raw[21];
@@ -586,7 +586,7 @@ void fsm_msgVerifyMessage(VerifyMessage *msg)
 		fsm_sendFailure(FailureType_Failure_Other, "No message provided");
 		return;
 	}
-	layoutProgressSwipe("Verifying", 0, 0);
+	layoutProgressSwipe("Verifying", 0);
 	uint8_t addr_raw[21];
 	if (!ecdsa_address_decode(msg->address, addr_raw)) {
 		fsm_sendFailure(FailureType_Failure_InvalidSignature, "Invalid address");
@@ -645,7 +645,7 @@ void fsm_msgEncryptMessage(EncryptMessage *msg)
 		layoutHome();
 		return;
 	}
-	layoutProgressSwipe("Encrypting", 0, 0);
+	layoutProgressSwipe("Encrypting", 0);
 	if (cryptoMessageEncrypt(&pubkey, msg->message.bytes, msg->message.size, display_only, resp->nonce.bytes, &(resp->nonce.size), resp->message.bytes, &(resp->message.size), resp->hmac.bytes, &(resp->hmac.size), signing ? node->private_key : 0, signing ? address_raw : 0) != 0) {
 		fsm_sendFailure(FailureType_Failure_ActionCancelled, "Error encrypting message");
 		layoutHome();
@@ -685,7 +685,7 @@ void fsm_msgDecryptMessage(DecryptMessage *msg)
 	if (!node) return;
 	if (fsm_deriveKey(node, msg->address_n, msg->address_n_count) == 0) return;
 
-	layoutProgressSwipe("Decrypting", 0, 0);
+	layoutProgressSwipe("Decrypting", 0);
 	RESP_INIT(DecryptedMessage);
 	bool display_only = false;
 	bool signing = false;
