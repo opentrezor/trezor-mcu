@@ -145,6 +145,7 @@ bool protectPin(bool use_cached)
 			delay(10000000);
 		}
 	}
+	storage_increasePinFails();
 	pin = requestPin(PinMatrixRequestType_PinMatrixRequestType_Current, "Please enter current PIN:");
 	if (!pin) {
 		fsm_sendFailure(FailureType_Failure_PinCancelled, "PIN Cancelled");
@@ -155,7 +156,6 @@ bool protectPin(bool use_cached)
 		storage_resetPinFails();
 		return true;
 	} else {
-		storage_increasePinFails();
 		fsm_sendFailure(FailureType_Failure_PinInvalid, "Invalid PIN");
 		return false;
 	}
